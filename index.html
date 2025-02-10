@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting DApp</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@4.5.0/dist/web3.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://as2.ftcdn.net/v2/jpg/08/79/66/11/1000_F_879661111_7hVLiVQdYNkvl5JiYBqDX3gipi8mcMN5.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #fff;
+            margin-top: 50px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Container for candidates */
+        #candidates {
+            width: 100%;
+            max-width: 800px;
+            margin: 50px 20px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .candidate {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .candidate:hover {
+            background-color: #444;
+            transform: translateY(-5px);
+        }
+
+        .candidate p {
+            margin: 0;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .candidate button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .candidate button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Connect Wallet button */
+        button.connect-wallet {
+            padding: 15px 30px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-bottom: 30px;
+        }
+
+        button.connect-wallet:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* Add responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .candidate {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .candidate button {
+                width: 100%;
+                padding: 12px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .candidate button {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Voting DApp</h1>
+    <div id="candidates"></div>
+    <button onclick="connectWallet()" class="connect-wallet">Connect Wallet</button>
+
+    <script>
+        // ABI and Contract Address (Replace these with your deployed contract details)
+        const contractABI = [
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_candidateid",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "vote",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "candidatecount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "candidates",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "id",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "voteCount",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "citizen",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+        const contractAddress = "0xb10Ff2d57137F0c596BA5e28B50CB473a17b2AED";
+
+        let web3;
+        let contract;
+
+        // Connect to MetaMask
+        async function connectWallet() {
+            if (window.ethereum) {
+                try {
+                    await window.ethereum.request({ method: "eth_requestAccounts" });
+                    web3 = new Web3(window.ethereum);
+                    contract = new web3.eth.Contract(contractABI, contractAddress);
+                    loadCandidates();
+                } catch (error) {
+                    console.error("User denied account access", error);
+                }
+            } else {
+                alert("Please install MetaMask to use this DApp.");
+            }
+        }
+
+        // Load Candidates
+        async function loadCandidates() {
+            const candidateCount = await contract.methods.candidatecount().call();
+            const candidatesDiv = document.getElementById("candidates");
+            candidatesDiv.innerHTML = "";
+
+            for (let i = 1; i <= candidateCount; i++) {
+                const candidate = await contract.methods.candidates(i).call();
+                const candidateElement = document.createElement("div");
+                candidateElement.className = "candidate";
+                candidateElement.innerHTML = `
+                    <p>ID: ${candidate.id}</p>
+                    <p>Name: ${candidate.name}</p>
+                    <p>Votes: ${candidate.voteCount}</p>
+                    <button onclick="vote(${candidate.id})">Vote</button>
+                `;
+                candidatesDiv.appendChild(candidateElement);
+            }
+        }
+
+        // Vote for a candidate
+        async function vote(candidateId) {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                await contract.methods.vote(candidateId).send({ from: accounts[0] });
+                alert("Vote cast successfully!");
+                loadCandidates();
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred while casting your vote.");
+            }
+        }
+    </script>
+</body>
+</html>

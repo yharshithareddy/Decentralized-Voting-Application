@@ -1,0 +1,117 @@
+
+    /* Global styles */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f7fc;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    h1 {
+        color: #333;
+        font-size: 3rem;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    /* Container for candidates */
+    #candidates {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .candidate {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f9f9f9;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .candidate:hover {
+        background-color: #eaeaea;
+        transform: translateY(-5px);
+    }
+
+    .candidate p {
+        margin: 0;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .candidate button {
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .candidate button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Connect Wallet button */
+    button.connect-wallet {
+        padding: 12px 25px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        margin-top: 30px;
+    }
+
+    button.connect-wallet:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+
+    /* Add responsiveness */
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        .candidate {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .candidate button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        body {
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+    }
